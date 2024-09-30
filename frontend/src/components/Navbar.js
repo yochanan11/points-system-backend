@@ -14,20 +14,20 @@ function Navbar({ setPage, setSearchId }) {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
       <div className="container">
-        <a className="navbar-brand" href="#" onClick={() => setPage('menu')}>בנק מקראות</a>
+        <button className="navbar-brand btn" onClick={() => setPage('menu')}>בנק מקראות</button>
         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span className="navbar-toggler-icon"></span>
         </button>
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav ms-auto">
             <li className="nav-item">
-              <a className="nav-link" href="#" onClick={() => setPage('list')}>הצג את כל התלמידים</a>
+              <button className="nav-link btn" onClick={() => setPage('list')}>הצג את כל התלמידים</button>
             </li>
             <li className="nav-item">
-              <a className="nav-link" href="#" onClick={() => setPage('addPoints')}>הוסף נקודות לתלמיד</a>
+              <button className="nav-link btn" onClick={() => setPage('addPoints')}>הוסף נקודות לתלמיד</button>
             </li>
             <li className="nav-item">
-              <a className="nav-link" href="#" onClick={() => setPage('updateParents')}>כתוב עדכון להורים</a>
+              <button className="nav-link btn" onClick={() => setPage('updateParents')}>כתוב עדכון להורים</button>
             </li>
           </ul>
 
