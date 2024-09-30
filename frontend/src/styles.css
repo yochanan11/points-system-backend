@@ -1,0 +1,176 @@
+:root {
+    --primary-color: #8b0000;
+    --secondary-color: #164150;
+    --background-color: #f8f9fa;
+    --text-color: #333;
+    --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+body {
+    background-color: var(--background-color);
+    padding-top: 70px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--text-color);
+}
+
+.navbar {
+    background-color: var(--secondary-color) !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+    color: white !important;
+}
+
+.navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-weight: 500;
+    margin-right: 15px;
+    transition: color 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+    color: white !important;
+}
+
+.navbar-toggler {
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 0.8)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+#searchForm {
+    margin-left: auto;
+}
+
+#searchForm .form-control {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+}
+
+#searchForm .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+#searchForm .btn {
+    border-color: white;
+    color: white;
+}
+
+.container {
+    max-width: 1200px;
+    width: 100%;
+    padding: 0 15px;
+    text-align: center;
+}
+
+.student-card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: var(--card-shadow);
+    padding: 24px;
+    margin-bottom: 24px;
+    transition: transform 0.3s ease;
+}
+
+.student-card:hover {
+    transform: translateY(-5px);
+}
+
+.student-card .card-img-left {
+    border-radius: 8px;
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    object-fit: cover;
+    margin-bottom: 16px;
+}
+
+.student-card .card-title {
+    color: var(--primary-color);
+    font-size: 1.4rem;
+    margin-bottom: 12px;
+}
+
+.table-responsive {
+    overflow-x: auto;
+    border-radius: 8px;
+    box-shadow: var(--card-shadow);
+}
+
+.table {
+    background-color: white;
+    margin-bottom: 0;
+}
+
+.table th {
+    background-color: var(--secondary-color);
+    color: white;
+    font-weight: bold;
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.table td {
+    vertical-align: middle;
+    border-color: #dee2e6;
+}
+
+.btn {
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: #6d0000;
+    border-color: #6d0000;
+}
+
+.btn-outline-success {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-outline-success:hover {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+#filterSection {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: var(--card-shadow);
+    padding: 20px;
+    margin-bottom: 24px;
+}
+
+#branchFilter {
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+@media (max-width: 991px) {
+    .navbar-nav {
+        margin-top: 10px;
+    }
+
+    #searchForm {
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    #searchForm .form-control,
+    #searchForm .btn {
+        margin: 5px 0;
+    }
+}
