@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import AddPoints from './AddPoints'; // נייבא את טופס עדכון הנקודות
 
 export default function SearchResults({ searchId }) {
   const [student, setStudent] = useState(null);
 
-  const fetchStudentData = () => {
+  const fetchStudentData = useCallback(() => {
     if (searchId) {
       fetch(`http://localhost:5000/api/students/${searchId}`)
         .then((response) => response.json())
@@ -13,11 +13,11 @@ export default function SearchResults({ searchId }) {
         })
         .catch((error) => console.error('Error fetching student:', error));
     }
-  };
+  }, [searchId]);
 
   useEffect(() => {
     fetchStudentData();
-  }, [searchId]);
+  }, [fetchStudentData]);
 
   return (
     <div className="container mx-auto px-4 py-8 text-center">
