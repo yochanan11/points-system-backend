@@ -48,7 +48,7 @@ function StudentList() {
   };
 
   const handleSaveEdit = () => {
-    fetch(`http://localhost:5000/api/students/${editStudent.studentId}`, {
+    fetch(`https://points-system-backend-6zon.vercel.app/api/students/${editStudent.studentId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(editStudent),
@@ -68,7 +68,7 @@ function StudentList() {
 
   const handleDelete = (studentId) => {
     if (window.confirm('האם אתה בטוח שברצונך למחוק את התלמיד?')) {
-      fetch(`http://localhost:5000/api/students/${studentId}`, { method: 'DELETE' })
+      fetch(`https://points-system-backend-6zon.vercel.app/api/students/${studentId}`, { method: 'DELETE' })
         .then((response) => response.json())
         .then(() => {
           setFilteredStudents(filteredStudents.filter(student => student.studentId !== studentId));
