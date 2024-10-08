@@ -11,7 +11,7 @@ function StudentList() {
   const [editStudent, setEditStudent] = useState(null);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/students')
+    fetch('https://points-system-backend-6zon.vercel.app/api/students')
       .then((response) => response.json())
       .then((data) => {
         const validStudents = data.filter((student) =>
