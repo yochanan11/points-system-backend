@@ -117,6 +117,63 @@ app.post('/api/students/reset-score', async (req, res) => {
     }
 });
 
+// API להוספת תלמיד חדש
+app.post('/api/students', async (req, res) => {
+    const { studentId, firstName, lastName, branch, totalPoints, studentComments } = req.body;
+    try {
+      const newStudent = new Student({
+        studentId,
+        firstName,
+        lastName,
+        branch,
+        totalPoints,
+        studentComments,
+      });
+      await newStudent.save();
+      res.status(201).json(newStudent);
+    } catch (error) {
+      res.status(500).json({ message: 'Error adding student.', error: error.message });
+    }
+  });
+  // API לעדכון פרטי תלמיד
+app.put('/api/students/:studentId', async (req, res) => {
+    const { studentId } = req.params;
+    const { firstName, lastName, branch, totalPoints } = req.body;
+
+    try {
+        const student = await Student.findOne({ studentId: parseInt(studentId) });
+        if (student) {
+            student.firstName = firstName;
+            student.lastName = lastName;
+            student.branch = branch;
+            student.totalPoints = totalPoints;
+            await student.save();
+            res.json({ message: 'Student updated successfully', student });
+        } else {
+            res.status(404).json({ message: 'Student not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// API למחיקת תלמיד לפי studentId
+app.delete('/api/students/:studentId', async (req, res) => {
+    const { studentId } = req.params;
+
+    try {
+        const student = await Student.findOneAndDelete({ studentId: parseInt(studentId) });
+        if (student) {
+            res.json({ message: 'Student deleted successfully' });
+        } else {
+            res.status(404).json({ message: 'Student not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+
 // הפעלת השרת
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

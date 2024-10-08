@@ -8,6 +8,11 @@ function Menu({ setPage }) {
         <button className="btn btn-primary" onClick={() => setPage('list')}>
           הצג את כל התלמידים
         </button>
+       
+        <button className="btn btn-info" onClick={() => setPage('addStudent')}>
+          הוסף תלמיד חדש
+        </button>
+
         <button className="btn btn-secondary" onClick={() => setPage('search')}>
           חפש תלמיד לפי תעודת זהות
         </button>

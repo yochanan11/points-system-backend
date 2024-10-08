@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
+import { Edit, Trash2 } from 'lucide-react';
 
 function StudentList() {
   const [students, setStudents] = useState([]);
   const [filteredStudents, setFilteredStudents] = useState([]);
   const [branches, setBranches] = useState([]);
   const [selectedBranch, setSelectedBranch] = useState('');
-  const [loading, setLoading] = useState(true); // מצב טעינה
+  const [loading, setLoading] = useState(true);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editStudent, setEditStudent] = useState(null);
 
   useEffect(() => {
     fetch('http://localhost:5000/api/students')
@@ -19,11 +22,11 @@ function StudentList() {
 
         const uniqueBranches = [...new Set(validStudents.map((student) => student.branch))];
         setBranches(uniqueBranches);
-        setLoading(false); // עצירת הטעינה
+        setLoading(false);
       })
       .catch((error) => {
         console.error('Error fetching students:', error);
-        setLoading(false); // עצירת הטעינה במקרה של שגיאה
+        setLoading(false);
       });
   }, []);
 
@@ -36,6 +39,45 @@ function StudentList() {
     } else {
       const filtered = students.filter((student) => student.branch === branch);
       setFilteredStudents(filtered);
+    }
+  };
+
+  const handleEdit = (student) => {
+    setEditStudent({ ...student });
+    setShowEditModal(true);
+  };
+
+  const handleSaveEdit = () => {
+    fetch(`http://localhost:5000/api/students/${editStudent.studentId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(editStudent),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setStudents(students.map((student) => (student.studentId === editStudent.studentId ? editStudent : student)));
+        setFilteredStudents(filteredStudents.map((student) => (student.studentId === editStudent.studentId ? editStudent : student)));
+        alert('התלמיד עודכן בהצלחה!');
+      })
+      .catch((error) => {
+        console.error('Error updating student:', error);
+        alert('שגיאה בעדכון תלמיד.');
+      });
+    setShowEditModal(false);
+  };
+
+  const handleDelete = (studentId) => {
+    if (window.confirm('האם אתה בטוח שברצונך למחוק את התלמיד?')) {
+      fetch(`http://localhost:5000/api/students/${studentId}`, { method: 'DELETE' })
+        .then((response) => response.json())
+        .then(() => {
+          setFilteredStudents(filteredStudents.filter(student => student.studentId !== studentId));
+          alert('התלמיד נמחק בהצלחה!');
+        })
+        .catch((error) => {
+          console.error('Error deleting student:', error);
+          alert('שגיאה במחיקת תלמיד.');
+        });
     }
   };
 
@@ -70,6 +112,7 @@ function StudentList() {
                 <th>שם משפחה</th>
                 <th>סניף</th>
                 <th>נקודות</th>
+                <th>פעולות</th>
               </tr>
             </thead>
             <tbody>
@@ -81,15 +124,86 @@ function StudentList() {
                     <td>{student.lastName}</td>
                     <td>{student.branch}</td>
                     <td>{student.totalPoints}</td>
+                    <td>
+                      <Edit size={20} className="me-2" style={{ cursor: 'pointer' }} onClick={() => handleEdit(student)} />
+                      <Trash2 size={20} style={{ cursor: 'pointer' }} onClick={() => handleDelete(student.studentId)} />
+                    </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="5" className="text-center">לא נמצאו תלמידים</td>
+                  <td colSpan="6" className="text-center">לא נמצאו תלמידים</td>
                 </tr>
               )}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* מודל עריכה מותאם אישית */}
+      {showEditModal && (
+        <div className="modal fade show" style={{ display: 'block' }} tabIndex="-1">
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">ערוך תלמיד</h5>
+                <button type="button" className="btn-close" onClick={() => setShowEditModal(false)}></button>
+              </div>
+              <div className="modal-body">
+                {editStudent && (
+                  <form>
+                    <div className="mb-3">
+                      <label className="form-label">שם פרטי</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        value={editStudent.firstName}
+                        onChange={(e) => setEditStudent({ ...editStudent, firstName: e.target.value })}
+                      />
+                    </div>
+                    <div className="mb-3">
+                      <label className="form-label">שם משפחה</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        value={editStudent.lastName}
+                        onChange={(e) => setEditStudent({ ...editStudent, lastName: e.target.value })}
+                      />
+                    </div>
+                    <div className="mb-3">
+                      <label className="form-label">סניף</label>
+                      <select
+                        className="form-select"
+                        value={editStudent.branch}
+                        onChange={(e) => setEditStudent({ ...editStudent, branch: e.target.value })}
+                      >
+                        {branches.map(branch => (
+                          <option key={branch} value={branch}>{branch}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="mb-3">
+                      <label className="form-label">נקודות</label>
+                      <input
+                        type="number"
+                        className="form-control"
+                        value={editStudent.totalPoints}
+                        onChange={(e) => setEditStudent({ ...editStudent, totalPoints: parseInt(e.target.value) })}
+                      />
+                    </div>
+                  </form>
+                )}
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={() => setShowEditModal(false)}>
+                  ביטול
+                </button>
+                <button type="button" className="btn btn-primary" onClick={handleSaveEdit}>
+                  שמור שינויים
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>

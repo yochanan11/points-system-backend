@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import Menu from './components/Menu';
 import StudentList from './components/StudentList';
-import SearchResults from './components/SearchResults'; // הגדרה תקינה
+import SearchResults from './components/SearchResults';
 import AddPoints from './components/AddPoints';
 import UpdateParents from './components/UpdateParents';
 import Navbar from './components/Navbar';
+import AddStudent from './components/AddStudent'; // ייבוא רכיב הוספת תלמיד
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import './styles.css';
@@ -22,6 +23,8 @@ function App() {
       return <AddPoints />;
     } else if (page === 'updateParents') {
       return <UpdateParents />;
+    } else if (page === 'addStudent') { // ניווט לדף הוספת תלמיד
+      return <AddStudent onStudentAdded={() => setPage('list')} />;
     } else {
       return <Menu setPage={setPage} />;
     }
