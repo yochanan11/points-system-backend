@@ -6,8 +6,17 @@ function UpdateParents() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // ביצוע פעולת שליחת עדכון להורים (ניתן לבצע POST לשרת כאן)
-    console.log(`Sending update to parents of student with ID: ${studentId}, Message: ${message}`);
+    fetch(`http://localhost:5000/api/students/${studentId}/message`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message }),
+    })
+      .then((response) => response.json())
+      .then(() => {
+        alert('הודעה נשלחה בהצלחה להורים');
+        setMessage('');
+      })
+      .catch(() => alert('שגיאה בשליחת ההודעה להורים.'));
   };
 
   return (

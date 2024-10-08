@@ -1,28 +1,52 @@
 import React, { useState } from 'react';
-import { PlusCircle, MinusCircle, Gift } from 'lucide-react';
+import { PlusCircle, MinusCircle, Gift, RotateCcw } from 'lucide-react';
 
 export default function AddPoints({ studentId, onUpdate }) {
   const [points, setPoints] = useState('');
-  const [bonus, setBonus] = useState('');
   const [showBonusModal, setShowBonusModal] = useState(false);
 
   const handleUpdatePoints = (isAddition) => {
-    fetch('http://localhost:5000/api/students/update-score', {
+    const pointsToAdd = isAddition ? parseInt(points) : -parseInt(points);
+
+    fetch(`http://localhost:5000/api/students/${studentId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.totalPoints + pointsToAdd < 0) {
+          alert("תלמי יקר אין לך מספיק נקודות");
+          setPoints('');
+        } else {
+          fetch('http://localhost:5000/api/students/update-score', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              studentId: studentId,
+              points: pointsToAdd,
+            }),
+          })
+            .then(() => {
+              setPoints('');
+              onUpdate();
+            })
+            .catch((error) => {
+              alert('שגיאה בעדכון נקודות.');
+            });
+        }
+      });
+  };
+
+  const handleResetPoints = () => {
+    fetch('http://localhost:5000/api/students/reset-score', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         studentId: studentId,
-        points: isAddition ? parseInt(points) : -parseInt(points),
       }),
     })
-      .then((response) => response.json())
-      .then((data) => {
-        alert(isAddition ? 'נקודות נוספו בהצלחה!' : 'נקודות הוסרו בהצלחה!');
-        setPoints('');
+      .then(() => {
         onUpdate();
       })
       .catch((error) => {
-        alert('שגיאה בעדכון נקודות.');
+        alert('שגיאה באיפוס הנקודות.');
       });
   };
 
@@ -33,13 +57,11 @@ export default function AddPoints({ studentId, onUpdate }) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         studentId: studentId,
-        bonus: parseInt(bonus),
+        bonus: parseInt(points),
       }),
     })
-      .then((response) => response.json())
-      .then((data) => {
-        alert('בונוס נוסף בהצלחה!');
-        setBonus('');
+      .then(() => {
+        setPoints('');
         setShowBonusModal(false);
         onUpdate();
       })
@@ -49,8 +71,8 @@ export default function AddPoints({ studentId, onUpdate }) {
   };
 
   return (
-    <div className="flex flex-col items-center mt-4"> {/* תכונה לסידור הכפתורים ושדה הקלט */}
-      <div className="flex items-center space-x-4 rtl:space-x-reverse w-full justify-center mb-4"> {/* תוספת רווחים בין הכפתורים */}
+    <div className="flex flex-col items-center mt-4">
+      <div className="flex items-center space-x-6 rtl:space-x-reverse w-full justify-center mb-4">
         <input
           type="number"
           value={points}
@@ -67,9 +89,11 @@ export default function AddPoints({ studentId, onUpdate }) {
         <button onClick={() => setShowBonusModal(true)} className="btn btn-secondary px-4">
           <Gift className="mr-1 h-4 w-4" /> הוסף בונוס
         </button>
+        <button onClick={handleResetPoints} className="btn btn-warning px-4">
+          <RotateCcw className="mr-1 h-4 w-4" /> איפוס נקודות
+        </button>
       </div>
 
-      {/* מודאל הוספת בונוס */}
       {showBonusModal && (
         <div className="modal fade show" style={{ display: 'block' }} tabIndex="-1">
           <div className="modal-dialog">
@@ -84,8 +108,8 @@ export default function AddPoints({ studentId, onUpdate }) {
                   <input
                     id="bonus"
                     type="number"
-                    value={bonus}
-                    onChange={(e) => setBonus(e.target.value)}
+                    value={points}
+                    onChange={(e) => setPoints(e.target.value)}
                     required
                     className="form-control"
                   />

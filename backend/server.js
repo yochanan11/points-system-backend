@@ -8,10 +8,7 @@ app.use(cors());
 app.use(express.json());
 
 // חיבור ל-MongoDB
-mongoose.connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-})
+mongoose.connect(process.env.MONGO_URI)
     .then(() => {
         console.log('Connected to MongoDB');
         console.log(`Connected to MongoDB, database name: ${mongoose.connection.name}`);
@@ -26,8 +23,7 @@ const studentSchema = new mongoose.Schema({
     firstName: String, // שם פרטי
     lastName: String, // שם משפחה
     branch: String, // סניף
-    points: Number, // נקודות
-    bonus: Number, // בונוס
+    totalPoints: { type: Number, default: 0 }, // סך כל הנקודות הכוללות
     studentComments: String // הערות על התלמיד
 }, { collection: 'students' });
 
@@ -46,14 +42,14 @@ app.get('/api/students', async (req, res) => {
     }
 });
 
-// API לעדכון בונוס של תלמיד
+// API לעדכון בונוס של תלמיד (מתעדכן כ-totalPoints)
 app.post('/api/students/update-bonus', async (req, res) => {
     const { studentId, bonus } = req.body;
     console.log(`Incoming request: /api/students/update-bonus for studentId ${studentId}`);
     try {
         const student = await Student.findOne({ studentId });
         if (student) {
-            student.bonus += bonus;
+            student.totalPoints += bonus;
             await student.save();
             res.json({ message: 'Bonus updated successfully' });
         } else {
@@ -82,14 +78,17 @@ app.get('/api/students/:studentId', async (req, res) => {
     }
 });
 
-// API לעדכון ניקוד של תלמיד
+// API לעדכון ניקוד של תלמיד (הוספת נקודות לסך הכל)
 app.post('/api/students/update-score', async (req, res) => {
     const { studentId, points } = req.body;
     console.log(`Incoming request: /api/students/update-score for studentId ${studentId}`);
     try {
         const student = await Student.findOne({ studentId });
         if (student) {
-            student.points += points;
+            if (student.totalPoints + points < 0) {
+                return res.status(400).json({ message: 'אין מספיק נקודות' });
+            }
+            student.totalPoints += points;
             await student.save();
             res.json({ message: 'Score updated successfully' });
         } else {
@@ -101,9 +100,25 @@ app.post('/api/students/update-score', async (req, res) => {
     }
 });
 
+// API לאיפוס נקודות של תלמיד
+app.post('/api/students/reset-score', async (req, res) => {
+    const { studentId } = req.body;
+    try {
+        const student = await Student.findOne({ studentId });
+        if (student) {
+            student.totalPoints = 0;
+            await student.save();
+            res.json({ message: 'Score reset successfully' });
+        } else {
+            res.status(404).json({ message: 'Student not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
 // הפעלת השרת
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
-

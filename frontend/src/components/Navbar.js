@@ -6,8 +6,8 @@ function Navbar({ setPage, setSearchId }) {
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchId) {
-      setSearchId(searchId); // שמירה של ה-ID לחיפוש
-      setPage('searchResults'); // מעבר לדף תוצאות החיפוש
+      setSearchId(searchId);
+      setPage('searchResults');
     }
   };
 
@@ -30,8 +30,6 @@ function Navbar({ setPage, setSearchId }) {
               <button className="nav-link btn" onClick={() => setPage('updateParents')}>כתוב עדכון להורים</button>
             </li>
           </ul>
-
-          {/* תיבת החיפוש */}
           <form className="d-flex ms-3" onSubmit={handleSearch}>
             <input 
               className="form-control me-2" 

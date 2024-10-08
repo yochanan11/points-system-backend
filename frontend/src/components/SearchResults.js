@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import AddPoints from './AddPoints'; // נייבא את טופס עדכון הנקודות
+import AddPoints from './AddPoints';
 
 export default function SearchResults({ searchId }) {
   const [student, setStudent] = useState(null);
@@ -33,9 +33,7 @@ export default function SearchResults({ searchId }) {
             <h3 className="text-xl font-semibold mb-2">{student.firstName} {student.lastName}</h3>
             <p><strong>קוד זיהוי:</strong> {student.studentId}</p>
             <p><strong>סניף:</strong> {student.branch}</p>
-            <p><strong>נקודות:</strong> {student.points}</p>
-            <p><strong>בונוס:</strong> {student.bonus}</p>
-            <p><strong>סה"כ נקודות:</strong> {student.points + student.bonus}</p>
+            <p><strong>נקודות:</strong> {student.totalPoints}</p>
           </div>
         </div>
       ) : (
