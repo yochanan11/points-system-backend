@@ -13,12 +13,6 @@ function Menu({ setPage }) {
           הוסף תלמיד חדש
         </button>
 
-        <button className="btn btn-secondary" onClick={() => setPage('search')}>
-          חפש תלמיד לפי תעודת זהות
-        </button>
-        <button className="btn btn-success" onClick={() => setPage('addPoints')}>
-          הוסף נקודות לתלמיד
-        </button>
         <button className="btn btn-warning" onClick={() => setPage('updateParents')}>
           כתוב עדכון להורים
         </button>

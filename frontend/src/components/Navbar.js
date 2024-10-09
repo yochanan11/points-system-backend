@@ -24,13 +24,13 @@ function Navbar({ setPage, setSearchId }) {
               <button className="nav-link btn" onClick={() => setPage('list')}>הצג את כל התלמידים</button>
             </li>
             <li className="nav-item">
-              <button className="nav-link btn" onClick={() => setPage('addPoints')}>הוסף נקודות לתלמיד</button>
+              <button className="nav-link btn" onClick={() => setPage('addStudent')}>הוסף תלמיד</button>
             </li>
             <li className="nav-item">
               <button className="nav-link btn" onClick={() => setPage('updateParents')}>כתוב עדכון להורים</button>
             </li>
           </ul>
-          <form className="d-flex ms-3" onSubmit={handleSearch}>
+          <form className="d-flex ms-3" onSubmit={handleSearch} style={{ gap: '10px' }}>
             <input 
               className="form-control me-2" 
               type="search" 

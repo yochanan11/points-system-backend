@@ -71,28 +71,27 @@ export default function AddPoints({ studentId, onUpdate }) {
   };
 
   return (
-    <div className="flex flex-col items-center mt-4">
-      <div className="flex items-center space-x-6 rtl:space-x-reverse w-full justify-center mb-4">
-        <input
-          type="number"
-          value={points}
-          onChange={(e) => setPoints(e.target.value)}
-          placeholder="הכנס נק'"
-          className="form-control w-24 h-10 text-center text-sm p-2 border border-gray-300 rounded"
-        />
-        <button onClick={() => handleUpdatePoints(true)} className="btn btn-success px-4">
-          <PlusCircle className="mr-1 h-4 w-4" /> הוסף נקודות
-        </button>
-        <button onClick={() => handleUpdatePoints(false)} className="btn btn-danger px-4">
-          <MinusCircle className="mr-1 h-4 w-4" /> הסר נקודות
-        </button>
-        <button onClick={() => setShowBonusModal(true)} className="btn btn-secondary px-4">
-          <Gift className="mr-1 h-4 w-4" /> הוסף בונוס
-        </button>
-        <button onClick={handleResetPoints} className="btn btn-warning px-4">
-          <RotateCcw className="mr-1 h-4 w-4" /> איפוס נקודות
-        </button>
-      </div>
+    <div className="d-flex justify-content-center align-items-center mt-4 gap-3 flex-wrap">
+      <input
+        type="number"
+        value={points}
+        onChange={(e) => setPoints(e.target.value)}
+        placeholder="הכנס נק'"
+        className="form-control text-center"
+        style={{ width: '120px', height: '50px', fontSize: '1.2rem' }}
+      />
+      <button onClick={() => handleUpdatePoints(true)} className="btn btn-success d-flex align-items-center justify-content-center" style={{ width: '180px', height: '50px', fontSize: '1.2rem', color: 'white' }}>
+        <PlusCircle className="me-2 h-5 w-5 text-white" /> הוסף נקודות
+      </button>
+      <button onClick={() => handleUpdatePoints(false)} className="btn btn-danger d-flex align-items-center justify-content-center" style={{ width: '180px', height: '50px', fontSize: '1.2rem', color: 'white' }}>
+        <MinusCircle className="me-2 h-5 w-5 text-white" /> הסר נקודות
+      </button>
+      <button onClick={() => setShowBonusModal(true)} className="btn" style={{ backgroundColor: '#8e44ad', color: 'white', width: '180px', height: '50px', fontSize: '1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Gift className="me-2 h-5 w-5 text-white" /> הוסף בונוס
+      </button>
+      <button onClick={handleResetPoints} className="btn btn-warning d-flex align-items-center justify-content-center" style={{ width: '180px', height: '50px', fontSize: '1.2rem', color: 'white' }}>
+        <RotateCcw className="me-2 h-5 w-5 text-white" /> איפוס נקודות
+      </button>
 
       {showBonusModal && (
         <div className="modal fade show" style={{ display: 'block' }} tabIndex="-1">

@@ -5,7 +5,7 @@ import SearchResults from './components/SearchResults';
 import AddPoints from './components/AddPoints';
 import UpdateParents from './components/UpdateParents';
 import Navbar from './components/Navbar';
-import AddStudent from './components/AddStudent'; // ייבוא רכיב הוספת תלמיד
+import AddStudent from './components/AddStudent'; // הוספת ייבוא עבור דף הוספת תלמיד
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import './styles.css';
@@ -23,22 +23,34 @@ function App() {
       return <AddPoints />;
     } else if (page === 'updateParents') {
       return <UpdateParents />;
-    } else if (page === 'addStudent') { // ניווט לדף הוספת תלמיד
-      return <AddStudent onStudentAdded={() => setPage('list')} />;
+    } else if (page === 'addStudent') { // הוספת תנאי לדף הוספת תלמיד
+      return <AddStudent />;
     } else {
       return <Menu setPage={setPage} />;
     }
   };
 
   return (
-    <div className="App">
-      {/* הצגת ה-Navbar */}
+    <div className="App d-flex flex-column min-vh-100">
       <Navbar setPage={setPage} setSearchId={setSearchId} />
 
-      {/* הצגת העמוד הנבחר */}
-      <div style={{ paddingTop: '60px' }}>
+      <div style={{ paddingTop: '60px', flex: '1' }}>
         {renderPage()}
       </div>
+
+      <footer
+        style={{
+          backgroundColor: '#03454e',
+          color: '#ffffff',
+          textAlign: 'center',
+          padding: '10px',
+          fontSize: '14px',
+          position: 'sticky',
+          bottom: '0',
+        }}
+      >
+        פיתוח: יוחנן שבדרון
+      </footer>
     </div>
   );
 }
