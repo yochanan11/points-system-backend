@@ -8,14 +8,14 @@ export default function AddPoints({ studentId, onUpdate }) {
   const handleUpdatePoints = (isAddition) => {
     const pointsToAdd = isAddition ? parseInt(points) : -parseInt(points);
 
-    fetch(`http://localhost:5000/api/students/${studentId}`)
+    fetch(`https://points-system-backend-6zon.vercel.app/api/students/${studentId}`)
       .then((res) => res.json())
       .then((data) => {
         if (data.totalPoints + pointsToAdd < 0) {
           alert("תלמי יקר אין לך מספיק נקודות");
           setPoints('');
         } else {
-          fetch('http://localhost:5000/api/students/update-score', {
+          fetch('https://points-system-backend-6zon.vercel.app/api/students/update-score', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -35,7 +35,7 @@ export default function AddPoints({ studentId, onUpdate }) {
   };
 
   const handleResetPoints = () => {
-    fetch('http://localhost:5000/api/students/reset-score', {
+    fetch('https://points-system-backend-6zon.vercel.app/api/students/reset-score', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -52,7 +52,7 @@ export default function AddPoints({ studentId, onUpdate }) {
 
   const handleBonusSubmit = (e) => {
     e.preventDefault();
-    fetch('http://localhost:5000/api/students/update-bonus', {
+    fetch('https://points-system-backend-6zon.vercel.app/api/students/update-bonus', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

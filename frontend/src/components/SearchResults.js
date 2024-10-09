@@ -6,7 +6,7 @@ export default function SearchResults({ searchId }) {
 
   const fetchStudentData = useCallback(() => {
     if (searchId) {
-      fetch(`http://localhost:5000/api/students/${searchId}`)
+      fetch(`https://points-system-backend-6zon.vercel.app/api/students/${searchId}`)
         .then((response) => response.json())
         .then((data) => {
           setStudent(data || null);

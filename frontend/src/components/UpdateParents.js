@@ -6,7 +6,7 @@ function UpdateParents() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    fetch(`http://localhost:5000/api/students/${studentId}/message`, {
+    fetch(`https://points-system-backend-6zon.vercel.app/api/students/${studentId}/message`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message }),

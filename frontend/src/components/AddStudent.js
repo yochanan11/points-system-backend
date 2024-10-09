@@ -22,7 +22,7 @@ function AddStudent({ onStudentAdded }) {
       studentComments,
     };
 
-    fetch('http://localhost:5000/api/students', {
+    fetch('https://points-system-backend-6zon.vercel.app/api/students', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
