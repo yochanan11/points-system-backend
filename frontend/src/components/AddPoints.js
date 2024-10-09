@@ -4,6 +4,12 @@ import { PlusCircle, MinusCircle, Gift, RotateCcw } from 'lucide-react';
 export default function AddPoints({ studentId, onUpdate }) {
   const [points, setPoints] = useState('');
   const [showBonusModal, setShowBonusModal] = useState(false);
+  const [alert, setAlert] = useState({ show: false, message: '', type: '' });
+
+  const showAlert = (message, type) => {
+    setAlert({ show: true, message, type });
+    setTimeout(() => setAlert({ show: false, message: '', type: '' }), 3000);
+  };
 
   const handleUpdatePoints = (isAddition) => {
     const pointsToAdd = isAddition ? parseInt(points) : -parseInt(points);
@@ -12,7 +18,7 @@ export default function AddPoints({ studentId, onUpdate }) {
       .then((res) => res.json())
       .then((data) => {
         if (data.totalPoints + pointsToAdd < 0) {
-          alert("תלמי יקר אין לך מספיק נקודות");
+          showAlert("תלמיד יקר אין לך מספיק נקודות", 'danger');
           setPoints('');
         } else {
           fetch('https://points-system-backend-6zon.vercel.app/api/students/update-score', {
@@ -26,9 +32,10 @@ export default function AddPoints({ studentId, onUpdate }) {
             .then(() => {
               setPoints('');
               onUpdate();
+              showAlert('הנקודות עודכנו בהצלחה', 'success');
             })
             .catch((error) => {
-              alert('שגיאה בעדכון נקודות.');
+              showAlert('שגיאה בעדכון נקודות', 'danger');
             });
         }
       });
@@ -44,9 +51,10 @@ export default function AddPoints({ studentId, onUpdate }) {
     })
       .then(() => {
         onUpdate();
+        showAlert('הנקודות אופסו בהצלחה', 'warning');
       })
       .catch((error) => {
-        alert('שגיאה באיפוס הנקודות.');
+        showAlert('שגיאה באיפוס הנקודות', 'danger');
       });
   };
 
@@ -64,34 +72,68 @@ export default function AddPoints({ studentId, onUpdate }) {
         setPoints('');
         setShowBonusModal(false);
         onUpdate();
+        showAlert('הבונוס נוסף בהצלחה', 'info');
       })
       .catch((error) => {
-        alert('שגיאה בהוספת בונוס.');
+        showAlert('שגיאה בהוספת בונוס', 'danger');
       });
   };
 
   return (
-    <div className="d-flex justify-content-center align-items-center mt-4 gap-3 flex-wrap">
-      <input
-        type="number"
-        value={points}
-        onChange={(e) => setPoints(e.target.value)}
-        placeholder="הכנס נק'"
-        className="form-control text-center"
-        style={{ width: '120px', height: '50px', fontSize: '1.2rem' }}
-      />
-      <button onClick={() => handleUpdatePoints(true)} className="btn btn-success d-flex align-items-center justify-content-center" style={{ width: '180px', height: '50px', fontSize: '1.2rem', color: 'white' }}>
-        <PlusCircle className="me-2 h-5 w-5 text-white" /> הוסף נקודות
-      </button>
-      <button onClick={() => handleUpdatePoints(false)} className="btn btn-danger d-flex align-items-center justify-content-center" style={{ width: '180px', height: '50px', fontSize: '1.2rem', color: 'white' }}>
-        <MinusCircle className="me-2 h-5 w-5 text-white" /> הסר נקודות
-      </button>
-      <button onClick={() => setShowBonusModal(true)} className="btn" style={{ backgroundColor: '#8e44ad', color: 'white', width: '180px', height: '50px', fontSize: '1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <Gift className="me-2 h-5 w-5 text-white" /> הוסף בונוס
-      </button>
-      <button onClick={handleResetPoints} className="btn btn-warning d-flex align-items-center justify-content-center" style={{ width: '180px', height: '50px', fontSize: '1.2rem', color: 'white' }}>
-        <RotateCcw className="me-2 h-5 w-5 text-white" /> איפוס נקודות
-      </button>
+    <div className="d-flex flex-column align-items-center mt-4 gap-3">
+      {alert.show && (
+        <div className={`alert alert-${alert.type} w-100 text-center`} role="alert">
+          {alert.message}
+        </div>
+      )}
+
+      <div className="d-flex justify-content-center align-items-center gap-3 flex-wrap">
+        <input
+          type="number"
+          value={points}
+          onChange={(e) => setPoints(e.target.value)}
+          placeholder="הכנס נקודות"
+          className="form-control text-center"
+          style={{ width: '150px', height: '50px', fontSize: '1.2rem' }}
+        />
+        <button
+          onClick={() => handleUpdatePoints(true)}
+          className="btn btn-success d-flex align-items-center justify-content-center"
+          style={{ width: '160px', height: '50px', fontSize: '1rem', color: 'white' }}
+        >
+          <PlusCircle style={{ marginRight: '8px' }} className="text-white" /> הוסף נקודות
+        </button>
+        <button
+          onClick={() => handleUpdatePoints(false)}
+          className="btn btn-danger d-flex align-items-center justify-content-center"
+          style={{ width: '160px', height: '50px', fontSize: '1rem', color: 'white' }}
+        >
+          <MinusCircle style={{ marginRight: '8px' }} className="text-white" /> הסר נקודות
+        </button>
+        <button
+          onClick={() => setShowBonusModal(true)}
+          className="btn"
+          style={{
+            backgroundColor: '#8e44ad',
+            color: 'white',
+            width: '160px',
+            height: '50px',
+            fontSize: '1rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Gift style={{ marginRight: '8px' }} className="text-white" /> הוסף בונוס
+        </button>
+        <button
+          onClick={handleResetPoints}
+          className="btn btn-warning d-flex align-items-center justify-content-center"
+          style={{ width: '160px', height: '50px', fontSize: '1rem', color: 'white' }}
+        >
+          <RotateCcw style={{ marginRight: '8px' }} className="text-white" /> איפוס נקודות
+        </button>
+      </div>
 
       {showBonusModal && (
         <div className="modal fade show" style={{ display: 'block' }} tabIndex="-1">

@@ -82,16 +82,17 @@ function StudentList() {
   };
 
   return (
-    <div className="container mt-5">
-      <h2 className="mb-4">רשימת תלמידים</h2>
-
-      <div className="mb-4">
-        <label htmlFor="branchFilter" className="form-label">סנן לפי סניף:</label>
+    <div className="container mt-2">
+      <div className="text-center mb-2 mt-1">
+        <h2 className="mb-0">רשימת תלמידים</h2>
+      </div>
+      <div className="d-flex justify-content-center mb-2">
         <select 
           id="branchFilter" 
-          className="form-select" 
+          className="form-select form-select-sm" 
           value={selectedBranch} 
           onChange={handleBranchChange}
+          style={{ maxWidth: '200px' }}
         >
           <option value="">הצג את כל הסניפים</option>
           {branches.map(branch => (
