@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Edit, Trash2 } from 'lucide-react';
+import CustomAlert from './CustomAlert';
 
 function StudentList() {
   const [students, setStudents] = useState([]);
@@ -9,6 +10,12 @@ function StudentList() {
   const [loading, setLoading] = useState(true);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editStudent, setEditStudent] = useState(null);
+  const [alert, setAlert] = useState({ show: false, message: '', type: '' });
+
+  const showAlert = (message, type) => {
+    setAlert({ show: true, message, type });
+    setTimeout(() => setAlert({ show: false, message: '', type: '' }), 3000);
+  };
 
   useEffect(() => {
     fetch('https://points-system-backend-6zon.vercel.app/api/students')
@@ -26,6 +33,7 @@ function StudentList() {
       })
       .catch((error) => {
         console.error('Error fetching students:', error);
+        showAlert('שגיאה בטעינת רשימת התלמידים.', 'danger');
         setLoading(false);
       });
   }, []);
@@ -57,11 +65,11 @@ function StudentList() {
       .then((data) => {
         setStudents(students.map((student) => (student.studentId === editStudent.studentId ? editStudent : student)));
         setFilteredStudents(filteredStudents.map((student) => (student.studentId === editStudent.studentId ? editStudent : student)));
-        alert('התלמיד עודכן בהצלחה!');
+        showAlert('התלמיד עודכן בהצלחה!', 'success');
       })
       .catch((error) => {
         console.error('Error updating student:', error);
-        alert('שגיאה בעדכון תלמיד.');
+        showAlert('שגיאה בעדכון תלמיד.', 'danger');
       });
     setShowEditModal(false);
   };
@@ -72,11 +80,11 @@ function StudentList() {
         .then((response) => response.json())
         .then(() => {
           setFilteredStudents(filteredStudents.filter(student => student.studentId !== studentId));
-          alert('התלמיד נמחק בהצלחה!');
+          showAlert('התלמיד נמחק בהצלחה!', 'success');
         })
         .catch((error) => {
           console.error('Error deleting student:', error);
-          alert('שגיאה במחיקת תלמיד.');
+          showAlert('שגיאה במחיקת תלמיד.', 'danger');
         });
     }
   };
@@ -86,6 +94,9 @@ function StudentList() {
       <div className="text-center mb-2 mt-1">
         <h2 className="mb-0">רשימת תלמידים</h2>
       </div>
+      {alert.show && (
+        <CustomAlert message={alert.message} type={alert.type} onClose={() => setAlert({ show: false, message: '', type: '' })} />
+      )}
       <div className="d-flex justify-content-center mb-2">
         <select 
           id="branchFilter" 

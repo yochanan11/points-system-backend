@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { PlusCircle, MinusCircle, Gift, RotateCcw } from 'lucide-react';
+import CustomAlert from './CustomAlert';
 
 export default function AddPoints({ studentId, onUpdate }) {
   const [points, setPoints] = useState('');
@@ -82,8 +83,8 @@ export default function AddPoints({ studentId, onUpdate }) {
   return (
     <div className="d-flex flex-column align-items-center mt-4 gap-3">
       {alert.show && (
-        <div className={`alert alert-${alert.type} w-100 text-center`} role="alert">
-          {alert.message}
+        <div className="alert-wrapper" style={{ position: 'fixed', top: '60px', left: '50%', transform: 'translateX(-50%)', zIndex: 1050 }}>
+          <CustomAlert message={alert.message} type={alert.type} onClose={() => setAlert({ show: false, message: '', type: '' })} />
         </div>
       )}
 
