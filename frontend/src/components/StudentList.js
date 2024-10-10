@@ -119,7 +119,7 @@ function StudentList() {
           <table className="table table-striped table-hover">
             <thead>
               <tr>
-                <th>קוד זיהוי</th>
+                <th>מספר תלמיד</th>
                 <th>שם פרטי</th>
                 <th>שם משפחה</th>
                 <th>סניף</th>

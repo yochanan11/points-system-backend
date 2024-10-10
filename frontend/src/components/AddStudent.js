@@ -93,7 +93,7 @@ function AddStudent({ onStudentAdded }) {
         <h2 className="text-center mb-4">הוסף תלמיד חדש</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
-            <label className="form-label">מספר תעודת זהות</label>
+            <label className="form-label">מספר תלמיד</label>
             <input
               type="number"
               className="form-control"
