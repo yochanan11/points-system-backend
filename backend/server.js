@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-require('dotenv').config(); // ודא שיש לך קובץ .env עם ה-URI של MongoDB
+require('dotenv').config();
 
 const app = express();
 app.use(cors());
@@ -11,33 +11,36 @@ app.use(express.json());
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {
         console.log('Connected to MongoDB');
-        console.log(`Connected to MongoDB, database name: ${mongoose.connection.name}`);
     })
     .catch((error) => {
         console.error('Error connecting to MongoDB:', error);
     });
 
-// הגדרת ה-Schema של הסטודנטים
+// הגדרת ה-Schema של הסניפים
+const branchSchema = new mongoose.Schema({
+    branchName: String
+});
+
+const Branch = mongoose.model('Branch', branchSchema);
+
+// הגדרת ה-Schema של הסטודנטים עם branchId
 const studentSchema = new mongoose.Schema({
-    studentId: Number, // מזהה ייחודי לתלמיד
-    firstName: String, // שם פרטי
-    lastName: String, // שם משפחה
-    branch: String, // סניף
-    totalPoints: { type: Number, default: 0 }, // סך כל הנקודות הכוללות
-    studentComments: String // הערות על התלמיד
+    studentId: Number,
+    firstName: String,
+    lastName: String,
+    branchId: { type: mongoose.Schema.Types.ObjectId, ref: 'Branch' },
+    totalPoints: { type: Number, default: 0 },
+    studentComments: String
 }, { collection: 'students' });
 
 const Student = mongoose.model('Student', studentSchema);
 
-// API לקבלת כל התלמידים
+// API לקבלת כל התלמידים עם פרטי הסניף
 app.get('/api/students', async (req, res) => {
-    console.log('Incoming request: /api/students');
     try {
-        const students = await Student.find();
-        console.log('Students from database:', students);
+        const students = await Student.find().populate('branchId', 'branchName');
         res.json(students);
     } catch (error) {
-        console.error('Error fetching data:', error);
         res.status(500).json({ message: error.message });
     }
 });
@@ -45,7 +48,6 @@ app.get('/api/students', async (req, res) => {
 // API לעדכון בונוס של תלמיד (מתעדכן כ-totalPoints)
 app.post('/api/students/update-bonus', async (req, res) => {
     const { studentId, bonus } = req.body;
-    console.log(`Incoming request: /api/students/update-bonus for studentId ${studentId}`);
     try {
         const student = await Student.findOne({ studentId });
         if (student) {
@@ -56,24 +58,21 @@ app.post('/api/students/update-bonus', async (req, res) => {
             res.status(404).json({ message: 'Student not found' });
         }
     } catch (error) {
-        console.error('Error updating bonus:', error);
         res.status(500).json({ message: error.message });
     }
 });
 
-// API לקבלת תלמיד לפי studentId
+// API לקבלת תלמיד לפי studentId עם פרטי הסניף
 app.get('/api/students/:studentId', async (req, res) => {
     const { studentId } = req.params;
-    console.log(`Incoming request: /api/students/${studentId}`);
     try {
-        const student = await Student.findOne({ studentId: parseInt(studentId) });
+        const student = await Student.findOne({ studentId: parseInt(studentId) }).populate('branchId', 'branchName');
         if (student) {
             res.json(student);
         } else {
             res.status(404).json({ message: 'Student not found' });
         }
     } catch (error) {
-        console.error('Error fetching student:', error);
         res.status(500).json({ message: error.message });
     }
 });
@@ -81,7 +80,6 @@ app.get('/api/students/:studentId', async (req, res) => {
 // API לעדכון ניקוד של תלמיד (הוספת נקודות לסך הכל)
 app.post('/api/students/update-score', async (req, res) => {
     const { studentId, points } = req.body;
-    console.log(`Incoming request: /api/students/update-score for studentId ${studentId}`);
     try {
         const student = await Student.findOne({ studentId });
         if (student) {
@@ -95,7 +93,6 @@ app.post('/api/students/update-score', async (req, res) => {
             res.status(404).json({ message: 'Student not found' });
         }
     } catch (error) {
-        console.error('Error updating score:', error);
         res.status(500).json({ message: error.message });
     }
 });
@@ -119,33 +116,33 @@ app.post('/api/students/reset-score', async (req, res) => {
 
 // API להוספת תלמיד חדש
 app.post('/api/students', async (req, res) => {
-    const { studentId, firstName, lastName, branch, totalPoints, studentComments } = req.body;
+    const { studentId, firstName, lastName, branchId, totalPoints, studentComments } = req.body;
     try {
-      const newStudent = new Student({
-        studentId,
-        firstName,
-        lastName,
-        branch,
-        totalPoints,
-        studentComments,
-      });
-      await newStudent.save();
-      res.status(201).json(newStudent);
+        const newStudent = new Student({
+            studentId,
+            firstName,
+            lastName,
+            branchId,
+            totalPoints,
+            studentComments,
+        });
+        await newStudent.save();
+        res.status(201).json(newStudent);
     } catch (error) {
-      res.status(500).json({ message: 'Error adding student.', error: error.message });
+        res.status(500).json({ message: 'Error adding student.', error: error.message });
     }
-  });
-  // API לעדכון פרטי תלמיד
+});
+
+// API לעדכון פרטי תלמיד
 app.put('/api/students/:studentId', async (req, res) => {
     const { studentId } = req.params;
-    const { firstName, lastName, branch, totalPoints } = req.body;
-
+    const { firstName, lastName, branchId, totalPoints } = req.body;
     try {
         const student = await Student.findOne({ studentId: parseInt(studentId) });
         if (student) {
             student.firstName = firstName;
             student.lastName = lastName;
-            student.branch = branch;
+            student.branchId = branchId;
             student.totalPoints = totalPoints;
             await student.save();
             res.json({ message: 'Student updated successfully', student });
@@ -160,7 +157,6 @@ app.put('/api/students/:studentId', async (req, res) => {
 // API למחיקת תלמיד לפי studentId
 app.delete('/api/students/:studentId', async (req, res) => {
     const { studentId } = req.params;
-
     try {
         const student = await Student.findOneAndDelete({ studentId: parseInt(studentId) });
         if (student) {
@@ -172,7 +168,6 @@ app.delete('/api/students/:studentId', async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
-
 
 // הפעלת השרת
 const PORT = process.env.PORT || 5000;
