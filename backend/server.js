@@ -154,6 +154,8 @@ app.put('/api/students/:studentId', async (req, res) => {
     }
 });
 
+
+
 // API למחיקת תלמיד לפי studentId
 app.delete('/api/students/:studentId', async (req, res) => {
     const { studentId } = req.params;
