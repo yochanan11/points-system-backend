@@ -17,24 +17,31 @@ function StudentList() {
     setTimeout(() => setAlert({ show: false, message: '', type: '' }), 3000);
   };
 
+  // שליפת רשימת התלמידים והסניפים מהשרת
   useEffect(() => {
     fetch('https://points-system-backend-6zon.vercel.app/api/students')
       .then((response) => response.json())
       .then((data) => {
         const validStudents = data.filter((student) =>
-          student.studentId && student.firstName && student.lastName && student.branch && student.totalPoints !== undefined
+          student.studentId && student.firstName && student.lastName && student.branchId && student.totalPoints !== undefined
         );
         setStudents(validStudents);
         setFilteredStudents(validStudents);
-
-        const uniqueBranches = [...new Set(validStudents.map((student) => student.branch))];
-        setBranches(uniqueBranches);
         setLoading(false);
       })
       .catch((error) => {
         console.error('Error fetching students:', error);
         showAlert('שגיאה בטעינת רשימת התלמידים.', 'danger');
         setLoading(false);
+      });
+
+    // שליפת רשימת הסניפים מהשרת
+    fetch('https://points-system-backend-6zon.vercel.app/api/branches')
+      .then((response) => response.json())
+      .then((data) => setBranches(data))
+      .catch((error) => {
+        console.error('Error fetching branches:', error);
+        showAlert('שגיאה בטעינת רשימת הסניפים.', 'danger');
       });
   }, []);
 
@@ -45,7 +52,7 @@ function StudentList() {
     if (branch === '') {
       setFilteredStudents(students);
     } else {
-      const filtered = students.filter((student) => student.branch === branch);
+      const filtered = students.filter((student) => student.branchId?.branchName === branch);
       setFilteredStudents(filtered);
     }
   };
@@ -59,7 +66,7 @@ function StudentList() {
     fetch(`https://points-system-backend-6zon.vercel.app/api/students/${editStudent.studentId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(editStudent),
+      body: JSON.stringify({ ...editStudent, branchId: editStudent.branchId._id }),
     })
       .then((response) => response.json())
       .then((data) => {
@@ -107,7 +114,7 @@ function StudentList() {
         >
           <option value="">הצג את כל הסניפים</option>
           {branches.map(branch => (
-            <option key={branch} value={branch}>{branch}</option>
+            <option key={branch._id} value={branch.branchName}>{branch.branchName}</option>
           ))}
         </select>
       </div>
@@ -134,7 +141,7 @@ function StudentList() {
                     <td>{student.studentId}</td>
                     <td>{student.firstName}</td>
                     <td>{student.lastName}</td>
-                    <td>{student.branch}</td>
+                    <td>{student.branchId?.branchName}</td>
                     <td>{student.totalPoints}</td>
                     <td>
                       <Edit size={20} className="me-2" style={{ cursor: 'pointer' }} onClick={() => handleEdit(student)} />
@@ -186,11 +193,11 @@ function StudentList() {
                       <label className="form-label">סניף</label>
                       <select
                         className="form-select"
-                        value={editStudent.branch}
-                        onChange={(e) => setEditStudent({ ...editStudent, branch: e.target.value })}
+                        value={editStudent.branchId?._id || ''}
+                        onChange={(e) => setEditStudent({ ...editStudent, branchId: e.target.value })}
                       >
                         {branches.map(branch => (
-                          <option key={branch} value={branch}>{branch}</option>
+                          <option key={branch._id} value={branch._id}>{branch.branchName}</option>
                         ))}
                       </select>
                     </div>
@@ -201,25 +208,26 @@ function StudentList() {
                         className="form-control"
                         value={editStudent.totalPoints}
                         onChange={(e) => setEditStudent({ ...editStudent, totalPoints: parseInt(e.target.value) })}
-                      />
-                    </div>
-                  </form>
-                )}
-              </div>
-              <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" onClick={() => setShowEditModal(false)}>
-                  ביטול
-                </button>
-                <button type="button" className="btn btn-primary" onClick={handleSaveEdit}>
-                  שמור שינויים
-                </button>
+                        />
+                      </div>
+                    </form>
+                  )}
+                </div>
+                <div className="modal-footer">
+                  <button type="button" className="btn btn-secondary" onClick={() => setShowEditModal(false)}>
+                    ביטול
+                  </button>
+                  <button type="button" className="btn btn-primary" onClick={handleSaveEdit}>
+                    שמור שינויים
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-export default StudentList;
+        )}
+      </div>
+    );
+  }
+  
+  export default StudentList;
+  

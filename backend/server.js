@@ -168,7 +168,15 @@ app.delete('/api/students/:studentId', async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
-
+// API לקבלת כל הסניפים
+app.get('/api/branches', async (req, res) => {
+    try {
+        const branches = await Branch.find();
+        res.json(branches);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching branches.', error: error.message });
+    }
+});
 // הפעלת השרת
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
