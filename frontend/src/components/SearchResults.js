@@ -49,8 +49,8 @@ export default function SearchResults({ searchId }) {
             />
             <div>
               <h3 className="text-xl font-semibold mb-2">{student.firstName} {student.lastName}</h3>
-              <p><strong>מספר תלמיד</strong> {student.studentId}</p>
-              <p><strong>סניף:</strong> {student.branch}</p>
+              <p><strong>מספר תלמיד:</strong> {student.studentId}</p>
+              <p><strong>סניף:</strong> {student.branchId?.branchName || 'לא זמין'}</p>
               <p><strong>נקודות:</strong> {student.totalPoints}</p>
             </div>
           </div>

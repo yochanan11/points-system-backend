@@ -1,27 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import CustomAlert from './CustomAlert';
 
 function AddStudent({ onStudentAdded }) {
   const [studentId, setStudentId] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [branch, setBranch] = useState('');
+  const [branchId, setBranchId] = useState(''); // שמירה של branchId במקום שם
   const [totalPoints, setTotalPoints] = useState(0);
   const [studentComments, setStudentComments] = useState('');
   const [alert, setAlert] = useState({ show: false, message: '', type: '' });
+  const [branches, setBranches] = useState([]); // אחסון רשימת הסניפים מהשרת
 
   const showAlert = (message, type) => {
     setAlert({ show: true, message, type });
     setTimeout(() => setAlert({ show: false, message: '', type: '' }), 3000);
   };
 
-  // רשימת סניפים - ניתן להוסיף ערכים בהמשך
-  const branches = ['מודיעין עילית', 'ביתר', 'בית שמש'];
+  useEffect(() => {
+    // שליפת רשימת הסניפים מהשרת
+    fetch('https://points-system-backend-6zon.vercel.app/api/branches')
+      .then((response) => response.json())
+      .then((data) => setBranches(data))
+      .catch((error) => {
+        console.error('Error fetching branches:', error);
+        showAlert('שגיאה בטעינת רשימת הסניפים.', 'danger');
+      });
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!studentId || !firstName || !lastName || !branch) {
+    if (!studentId || !firstName || !lastName || !branchId) {
       showAlert('כל השדות הם חובה.', 'danger');
       return;
     }
@@ -42,7 +51,7 @@ function AddStudent({ onStudentAdded }) {
             studentId: parseInt(studentId),
             firstName,
             lastName,
-            branch,
+            branchId, // שמירת branchId של הסניף
             totalPoints: parseInt(totalPoints),
             studentComments,
           };
@@ -68,7 +77,7 @@ function AddStudent({ onStudentAdded }) {
               setStudentId('');
               setFirstName('');
               setLastName('');
-              setBranch('');
+              setBranchId('');
               setTotalPoints(0);
               setStudentComments('');
             })
@@ -126,14 +135,14 @@ function AddStudent({ onStudentAdded }) {
             <label className="form-label">סניף</label>
             <select
               className="form-select"
-              value={branch}
-              onChange={(e) => setBranch(e.target.value)}
+              value={branchId}
+              onChange={(e) => setBranchId(e.target.value)} // עדכון ל-branchId
               required
             >
               <option value="">בחר סניף</option>
               {branches.map((branch) => (
-                <option key={branch} value={branch}>
-                  {branch}
+                <option key={branch._id} value={branch._id}>
+                  {branch.branchName}
                 </option>
               ))}
             </select>
